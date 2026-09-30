@@ -63,6 +63,6 @@ python scraper.py --category "Digital-Electronics" --output "market_price_report
 ---
 
 ## 👨‍💻 Author
-**Ardavan Ghal-eh**  
+**Ardavan Ghal-Eh**  
 Mechanical Engineering Student, Sharif University of Technology  
 *Specialized in Python Automation & Industrial Computing*
