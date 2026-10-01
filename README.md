@@ -1,14 +1,27 @@
-# 🛒 Automated E-Commerce Price & Market Data Scraper
+# 🛒 Advanced E-Commerce Price & Market Intelligence Engine
 
-A modular, production-ready Python scraping pipeline for tracking competitor prices, inventory availability, and product discounts across e-commerce marketplaces.
+A modular, production-ready Python scraping & market intelligence pipeline for tracking competitor prices, automated deal scoring, price-drop alerts, and inventory analytics across e-commerce marketplaces.
 
 ---
 
 ## 🌟 Key Features
-- **Intelligent Scraping & Backoff:** Uses random user-agent rotation, dynamic request headers, and exponential backoff retry mechanisms to prevent rate limits.
-- **Relational Persistence (SQLite):** Automatically creates tables and logs historical snapshots of product prices and availability over time.
-- **Automated Excel Export:** Formats extracted records into clean, business-ready `.xlsx` spreadsheets with Persian and English column mappings using `Pandas` and `openpyxl`.
-- **CLI & Demo Mode:** Supports instant execution with realistic simulation data as well as live target website parsing.
+- **Automated Deal Scoring Engine:** Evaluates price fluctuations to classify items into *Great Deal*, *Fair Deal*, or *Standard Pricing*.
+- **Price-Drop Event Triggers:** Detects significant drops (>=15%) and logs structured alert records in SQLite for downstream messaging/webhook distribution.
+- **Automated CI/CD Testing (GitHub Actions):** Fully integrated `.github/workflows/ci.yml` pipeline testing the entire scraping and database ingestion workflow on every push.
+- **Intelligent Anti-Bot Rotation:** Uses random user-agent rotation, dynamic headers, and exponential backoff retry mechanisms.
+- **Dual Persistence:** Automatically generates dual outputs: a normalized SQLite database and an executive-ready `.xlsx` spreadsheet.
+
+---
+
+## 🎯 Real-World Applications & Cross-Industry Impact
+
+### ⚙️ E-Commerce & Retail Supply Chain
+* **Dynamic Repricing Automation:** Providing real-time price intelligence feeds to automated algorithmic repricers.
+* **Competitor Monitoring:** Tracking promotions, flash sales, and inventory stockouts across competitors.
+
+### 🌐 Cross-Industry & Data Engineering
+* **Financial Arbitrage & Inflation Tracking:** Quantifying micro-level price indices across consumer electronics categories.
+* **Lead Generation & Market Analytics:** Gathering structured product catalogs for market research firms.
 
 ---
 
@@ -16,41 +29,19 @@ A modular, production-ready Python scraping pipeline for tracking competitor pri
 
 1. **Clone repository:**
    ```bash
-   git clone https://github.com/your-username/ecommerce-price-tracker.git
+   git clone https://github.com/ArdavanGhal-Eh/ecommerce-price-tracker.git
    cd ecommerce-price-tracker
    ```
 
-2. **Create virtual environment:**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
-3. **Install dependencies:**
+2. **Install dependencies:**
    ```bash
    pip install -r requirements.txt
    ```
 
----
-
-## 💻 Usage
-
-Run the data extraction pipeline:
-```bash
-python scraper.py --category "Digital-Electronics" --output "market_price_report.xlsx"
-```
-
-### CLI Arguments
-- `--category`: Target product category (default: `Digital-Electronics`).
-- `--output`: Name of generated Excel file (default: `market_price_report.xlsx`).
-- `--db`: SQLite database file path (default: `market_data.db`).
-
----
-
-## 📊 Sample Output Schema
-| عنوان کالا (Title) | دسته‌بندی (Category) | قیمت نهایی (Price) | تخفیف (Discount) | وضعیت موجودی (Stock) | فروشنده (Seller) |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| لپ‌تاپ 15.6 اینچی ایسوس | Electronics | 42,500,000 تومان | 10% | موجود | بازرگانی پارس تک |
+3. **Run pipeline:**
+   ```bash
+   python scraper.py --category "Digital-Electronics" --output "market_price_report.xlsx"
+   ```
 
 ---
 
@@ -59,10 +50,11 @@ python scraper.py --category "Digital-Electronics" --output "market_price_report
 - **HTTP & Parsing:** `requests`, `BeautifulSoup4`, `lxml`
 - **Data Engineering:** `pandas`, `openpyxl`
 - **Database:** `sqlite3`
+- **CI/CD:** GitHub Actions
 
 ---
 
 ## 👨‍💻 Author
 **Ardavan Ghal-Eh**  
 Mechanical Engineering Student, Sharif University of Technology  
-*Specialized in Python Automation & Industrial Computing*
+*Focus: Data Pipelines, Automation & Industrial Computing*

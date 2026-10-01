@@ -26,4 +26,4 @@ jobs:
 
     - name: Test Scraper Execution & Database Pipeline
       run: |
-        python scraper.py --demo --output test_output.xlsx
+        python scraper.py --demo --output test_market_report.xlsx
