@@ -1,60 +1,26 @@
-# 🛒 Advanced E-Commerce Price & Market Intelligence Engine
+# 🛒 Hybrid E-Commerce Price & Market Intelligence Engine (Python + Go)
 
-A modular, production-ready Python scraping & market intelligence pipeline for tracking competitor prices, automated deal scoring, price-drop alerts, and inventory analytics across e-commerce marketplaces.
+A production-ready polyglot architecture combining a **Go-powered concurrent HTTP fetcher** for multi-threaded crawling with a **Python analytics core** for deal scoring and Excel reporting.
 
----
-
-## 🌟 Key Features
-- **Automated Deal Scoring Engine:** Evaluates price fluctuations to classify items into *Great Deal*, *Fair Deal*, or *Standard Pricing*.
-- **Price-Drop Event Triggers:** Detects significant drops (>=15%) and logs structured alert records in SQLite for downstream messaging/webhook distribution.
-- **Automated CI/CD Testing (GitHub Actions):** Fully integrated `.github/workflows/ci.yml` pipeline testing the entire scraping and database ingestion workflow on every push.
-- **Intelligent Anti-Bot Rotation:** Uses random user-agent rotation, dynamic headers, and exponential backoff retry mechanisms.
-- **Dual Persistence:** Automatically generates dual outputs: a normalized SQLite database and an executive-ready `.xlsx` spreadsheet.
-
----
+## 🌟 Polyglot Architecture
+- **Go Concurrent Fetcher (`fast_fetcher_go/`):** High-speed parallel crawler bypassing Python GIL.
+- **Python Intelligence Core (`scraper.py`):** Algorithmic deal scoring and structured Excel reporting.
+- **CI/CD (`.github/workflows/ci.yml`):** Automated tests for both Python and Go on every commit.
 
 ## 🎯 Real-World Applications & Cross-Industry Impact
-
-### ⚙️ E-Commerce & Retail Supply Chain
-* **Dynamic Repricing Automation:** Providing real-time price intelligence feeds to automated algorithmic repricers.
-* **Competitor Monitoring:** Tracking promotions, flash sales, and inventory stockouts across competitors.
-
+### ⚙️ E-Commerce & Supply Chain
+- Parallel price scraping across large retail marketplaces for dynamic repricers.
 ### 🌐 Cross-Industry & Data Engineering
-* **Financial Arbitrage & Inflation Tracking:** Quantifying micro-level price indices across consumer electronics categories.
-* **Lead Generation & Market Analytics:** Gathering structured product catalogs for market research firms.
+- Real-time tick data ingestion for financial arbitrage and micro-inflation indices.
 
----
+## 🚀 Execution
+```bash
+# Go Fast Fetcher:
+cd fast_fetcher_go && go run main.go
 
-## 🚀 Installation & Setup
-
-1. **Clone repository:**
-   ```bash
-   git clone https://github.com/ArdavanGhal-Eh/ecommerce-price-tracker.git
-   cd ecommerce-price-tracker
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Run pipeline:**
-   ```bash
-   python scraper.py --category "Digital-Electronics" --output "market_price_report.xlsx"
-   ```
-
----
-
-## 🛠️ Tech Stack
-- **Language:** Python 3.10+
-- **HTTP & Parsing:** `requests`, `BeautifulSoup4`, `lxml`
-- **Data Engineering:** `pandas`, `openpyxl`
-- **Database:** `sqlite3`
-- **CI/CD:** GitHub Actions
-
----
+# Python Analytics:
+pip install -r requirements.txt && python scraper.py
+```
 
 ## 👨‍💻 Author
-**Ardavan Ghal-Eh**  
-Mechanical Engineering Student, Sharif University of Technology  
-*Focus: Data Pipelines, Automation & Industrial Computing*
+**Ardavan Ghal-Eh** | Sharif University of Technology
