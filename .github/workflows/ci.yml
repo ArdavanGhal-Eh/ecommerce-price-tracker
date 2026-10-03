@@ -1,16 +1,29 @@
-name: Hybrid Python & Go CI
+name: Python Test & Data Pipeline CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  test:
+  build-and-test:
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
-      with: { python-version: '3.11' }
-    - run: pip install -r requirements.txt
-    - run: python scraper.py
-    - uses: actions/setup-go@v5
-      with: { go-version: '1.21' }
-    - run: cd fast_fetcher_go && go run main.go
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Test Scraper Execution & Database Pipeline
+      run: |
+        python scraper.py --demo --output test_market_report.xlsx

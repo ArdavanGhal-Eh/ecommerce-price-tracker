@@ -2,53 +2,106 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"sync"
 	"time"
 )
 
-type Result struct {
+type FetchResult struct {
 	URL        string `json:"url"`
 	StatusCode int    `json:"status_code"`
 	DurationMs int64  `json:"duration_ms"`
+	Success    bool   `json:"success"`
+	Size       int    `json:"size_bytes"`
+}
+
+// Concurrent worker that drains URL queue
+func fetchWorker(id int, urls <-chan string, results chan<- FetchResult, client *http.Client, wg *sync.WaitGroup) {
+	defer wg.Done()
+	for targetURL := range urls {
+		start := time.Now()
+		req, err := http.NewRequest("GET", targetURL, nil)
+		if err != nil {
+			results <- FetchResult{URL: targetURL, Success: false}
+			continue
+		}
+		req.Header.Set("User-Agent", "Mozilla/5.0 (Fast-Go-Crawler-Engine/1.0)")
+
+		resp, err := client.Do(req)
+		duration := time.Since(start).Milliseconds()
+
+		if err != nil {
+			results <- FetchResult{
+				URL:        targetURL,
+				DurationMs: duration,
+				Success:    false,
+			}
+			continue
+		}
+
+		body, _ := io.ReadAll(resp.Body)
+		resp.Body.Close()
+
+		results <- FetchResult{
+			URL:        targetURL,
+			StatusCode: resp.StatusCode,
+			DurationMs: duration,
+			Success:    resp.StatusCode == 200,
+			Size:       len(body),
+		}
+		fmt.Printf("[Go Worker %d] Fetched: %s (Status: %d | Time: %d ms)\n", id, targetURL, resp.StatusCode, duration)
+	}
 }
 
 func main() {
-	urls := []string{
+	concurrency := flag.Int("concurrency", 10, "Number of concurrent worker goroutines")
+	outputFile := flag.String("output", "fetch_summary.json", "Output JSON report file")
+	flag.Parse()
+
+	// Sample high-volume target product URLs for batch crawling
+	targetURLs := []string{
 		"https://httpbin.org/get?item=asus_laptop",
 		"https://httpbin.org/get?item=macbook_air",
 		"https://httpbin.org/get?item=samsung_s24",
+		"https://httpbin.org/get?item=xiaomi_monitor",
+		"https://httpbin.org/get?item=sony_headphone",
+		"https://httpbin.org/get?item=logitech_mouse",
+		"https://httpbin.org/get?item=mechanical_keyboard",
+		"https://httpbin.org/get?item=external_ssd",
 	}
 
+	urlChan := make(chan string, len(targetURLs))
+	resultChan := make(chan FetchResult, len(targetURLs))
+
+	client := &http.Client{Timeout: 10 * time.Second}
 	var wg sync.WaitGroup
-	var results []Result
-	var mu sync.Mutex
-	client := &http.Client{Timeout: 5 * time.Second}
 
-	fmt.Println("🚀 High-Concurrency Go Fetcher running...")
-	for _, u := range urls {
+	fmt.Printf("🚀 Starting High-Concurrency Go Fetcher (%d workers)...\n", *concurrency)
+
+	for i := 1; i <= *concurrency; i++ {
 		wg.Add(1)
-		go func(target string) {
-			defer wg.Done()
-			start := time.Now()
-			resp, err := client.Get(target)
-			dur := time.Since(start).Milliseconds()
-			status := 0
-			if err == nil {
-				status = resp.StatusCode
-				resp.Body.Close()
-			}
-			mu.Lock()
-			results = append(results, Result{URL: target, StatusCode: status, DurationMs: dur})
-			mu.Unlock()
-			fmt.Printf("Fetched %s in %d ms\n", target, dur)
-		}(u)
+		go fetchWorker(i, urlChan, resultChan, client, &wg)
 	}
-	wg.Wait()
 
-	data, _ := json.MarshalIndent(results, "", "  ")
-	os.WriteFile("fetch_summary.json", data, 0644)
-	fmt.Println("✅ Go fetcher completed. Saved to fetch_summary.json")
+	for _, u := range targetURLs {
+		urlChan <- u
+	}
+	close(urlChan)
+
+	wg.Wait()
+	close(resultChan)
+
+	var allResults []FetchResult
+	for res := range resultChan {
+		allResults = append(allResults, res)
+	}
+
+	// Dump summary
+	data, _ := json.MarshalIndent(allResults, "", "  ")
+	os.WriteFile(*outputFile, data, 0644)
+	fmt.Printf("✅ Completed batch fetch of %d URLs in parallel. Summary written to %s\n", len(allResults), *outputFile)
 }
