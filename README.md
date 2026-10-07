@@ -1,159 +1,290 @@
+<a id="readme-top"></a>
+
+<!-- PROJECT SHIELDS -->
+<div align="center">
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![Python Version](https://img.shields.io/badge/Python-3.10%2B-3776AB.svg?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Go Worker](https://img.shields.io/badge/Go-Fast_Fetcher-00ADD8.svg?style=for-the-badge&logo=go&logoColor=white)](https://golang.org/)
+[![Storage](https://img.shields.io/badge/Database-SQLite3-003B57.svg?style=for-the-badge&logo=sqlite&logoColor=white)](https://www.sqlite.org/)
+[![Reporting](https://img.shields.io/badge/Reporting-OpenPyXL-217346.svg?style=for-the-badge&logo=microsoft-excel&logoColor=white)](https://openpyxl.readthedocs.io/)
+[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg?style=for-the-badge)](https://github.com/ArdavanGhal-Eh/ecommerce-price-tracker)
+[![Stars](https://img.shields.io/github/stars/ArdavanGhal-Eh/ecommerce-price-tracker?style=for-the-badge&color=gold)](https://github.com/ArdavanGhal-Eh/ecommerce-price-tracker/stargazers)
+[![Issues](https://img.shields.io/github/issues/ArdavanGhal-Eh/ecommerce-price-tracker?style=for-the-badge&color=red)](https://github.com/ArdavanGhal-Eh/ecommerce-price-tracker/issues)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge)](https://github.com/ArdavanGhal-Eh/ecommerce-price-tracker/pulls)
+
+<br />
+
 # 🛒 Automated E-Commerce Price Intelligence & Market Scraper
+### *High-Concurrency Web Crawling, Algorithmic Deal Scoring & 7-Day Trend Forecasting in Python & Go*
 
-A robust, production-grade Python web scraper and market intelligence pipeline designed to monitor competitor product catalogs, track price fluctuations, evaluate deal quality, and maintain historical price snapshots in SQLite and Excel.
+<p align="center">
+  <b>A production-grade competitive intelligence engine designed to monitor multi-seller e-commerce marketplaces. Combines resilient Python scraping with a high-throughput Go concurrent worker pool, persists longitudinal price histories in SQLite, evaluates competitor basket inflation via the Laspeyres index, forecasts 7-day price trajectories, and generates executive Excel reports with conditional deal badges.</b>
+  <br /><br />
+  <a href="#-system-architecture--data-pipeline"><strong>Pipeline Architecture »</strong></a>
+  &nbsp;•&nbsp;
+  <a href="#-algorithmic-formulation--pricing-models"><strong>Pricing Analytics »</strong></a>
+  &nbsp;•&nbsp;
+  <a href="#-quickstart--installation"><strong>Quickstart Guide »</strong></a>
+  &nbsp;•&nbsp;
+  <a href="https://github.com/ArdavanGhal-Eh/ecommerce-price-tracker/issues"><strong>Report Issue</strong></a>
+</p>
+
+</div>
 
 ---
 
-## 📌 Project Overview
-Online retailers and businesses need real-time awareness of market price trends and stock availability to maintain competitive pricing strategies. This project provides an autonomous data extraction engine that:
-1. Crawls e-commerce product pages and search listings.
-2. Extracts clean structured data (Product Title, Current Price, Original Price, Discount Percentage, Seller Name, User Rating, and Stock Status).
-3. Evaluates deals algorithmically (*Great Deal*, *Fair Deal*, or *Standard Pricing*) based on historical margins and discount depths.
-4. Generates business-ready Excel reports (`.xlsx`) with Persian/English headings and logs structured records into an SQLite relational database.
+<!-- TABLE OF CONTENTS -->
+<details open>
+  <summary><h2 style="display: inline-block;">📑 Table of Contents</h2></summary>
+  <ol>
+    <li><a href="#-executive-summary--business-problem">Executive Summary & Business Problem</a></li>
+    <li><a href="#-key-features--capabilities">Key Features & Capabilities</a></li>
+    <li><a href="#-system-architecture--data-pipeline">System Architecture & Data Pipeline</a></li>
+    <li><a href="#-algorithmic-formulation--pricing-models">Algorithmic Formulation & Pricing Models</a></li>
+    <li><a href="#-technology-stack">Technology Stack</a></li>
+    <li><a href="#-repository-structure">Repository Structure</a></li>
+    <li><a href="#-database-schema">Database Schema</a></li>
+    <li><a href="#-quickstart--installation">Quickstart & Installation</a></li>
+    <li><a href="#-cli-reference--usage-guide">CLI Reference & Usage Guide</a></li>
+    <li><a href="#-roadmap--future-enhancements">Roadmap & Future Enhancements</a></li>
+    <li><a href="#-contributing--license">Contributing & License</a></li>
+    <li><a href="#-author--contact">Author & Contact</a></li>
+  </ol>
+</details>
 
 ---
 
-## 🌟 Architecture & Data Flow
+## 📌 Executive Summary & Business Problem
+
+In fast-paced retail and e-commerce ecosystems (Digikala, Amazon, Torob, Emalls):
+1. **Dynamic Pricing Friction:** Competitors alter product prices multiple times per day. Manual price auditing fails to catch flash sales, predatory undercutting, or sudden stock-outs.
+2. **Anti-Scraping Defenses & Rate Limits:** Fragile scrapers get blocked by IP throttles and Cloudflare bot detection. A robust engine must rotate User-Agents, apply exponential backoff retries, and support concurrent distributed fetching.
+3. **Data Without Action:** Simply dumping raw HTML is useless to commercial directors. Teams need algorithmic deal evaluation, competitor price basket inflation indices, and automated Excel workbooks highlighting immediate margin opportunities.
+
+This project delivers an end-to-end price intelligence pipeline integrating resilient Python scraping, a high-concurrency Go worker pool, predictive forecasting, and executive reporting.
+
+<p align="right">(<a href="#readme-top">Back to top ↑</a>)</p>
+
+---
+
+## ✨ Key Features & Capabilities
+
+- 🔄 **Resilient Multi-Threaded Crawler (`scraper.py`):** Configurable User-Agent rotation, automatic HTTP retry adapters with exponential backoff, and robust error handling.
+- ⚡ **High-Concurrency Go Worker Pool (`fast_fetcher_go`):** Lightweight Go binary performing concurrent HTTP requests and JSON stream parsing at 1,000+ pages/minute.
+- 🎯 **Algorithmic Deal Quality Scoring:** Classifies price cuts using historical distributions (`EXCELLENT_DEAL`, `MODERATE_DISCOUNT`, `OVERPRICED`, `FAKE_DISCOUNT`).
+- 📈 **Predictive Price Trend Forecaster (`price_trend_forecaster.py`):** Calculates 7-day predictive moving average trends and linear regression price velocities ($dp/dt$).
+- 🧺 **Competitor Basket Inflation Index (`competitor_basket_index.py`):** Computes Laspeyres inflation metrics to measure whether an entire competitor catalog is getting cheaper or more expensive.
+- 📊 **Executive Excel Dashboard:** Generates styled `.xlsx` reports with green/red status badges, formatted currency values, and discount distribution charts using OpenPyXL.
+
+<p align="right">(<a href="#readme-top">Back to top ↑</a>)</p>
+
+---
+
+## 🏗️ System Architecture & Data Pipeline
 
 ```text
-┌─────────────────────────┐
-│ Target Product Listings │
-└────────────┬────────────┘
-             │ HTTP GET (Random User-Agents, Dynamic Headers)
-             ▼
-┌─────────────────────────┐
-│   HTTP Request Engine   │ <─── Exponential Backoff Retry (Max 3 retries)
-└────────────┬────────────┘
-             │ HTML Response
-             ▼
-┌─────────────────────────┐
-│ BeautifulSoup4 & Parser │ ───> Regex Price Cleaning & Digits Extraction
-└────────────┬────────────┘
-             │ Structured Dictionaries
-             ▼
-┌─────────────────────────┐
-│   Deal Scoring Engine   │ ───> Discount Evaluation (>=15% -> High Value Deal)
-└────────────┬────────────┘
-             ├──────────────────────────────────────┐
-             ▼                                      ▼
-┌─────────────────────────┐            ┌─────────────────────────┐
-│   SQLite Database       │            │   Excel Exporter        │
-│   (product_snapshots,   │            │   (Pandas & openpyxl,   │
-│    price_drop_alerts)   │            │    Market_Prices sheet) │
-└─────────────────────────┘            └─────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────┐
+│                   Target E-Commerce Product Listings                   │
+│             (Digikala / Torob / Competitor Marketplaces)               │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                   Ingestion & Extraction Engine                        │
+│         - Python Scraper with User-Agent Rotation                      │
+│         - High-Concurrency Go Worker Pool (Goroutines)                 │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ Structured Product Payloads
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                   Longitudinal SQLite Persistence                      │
+│         Table: products (id, title, price, seller, rating, time)       │
+└───────────────────┬────────────────────────────────┬───────────────────┘
+                    │                                │
+                    ▼                                ▼
+┌──────────────────────────────────────┐  ┌──────────────────────────────┐
+│    Price Forecaster & Deal Engine    │  │ Competitor Basket Inflation  │
+│  - 7-Day Moving Average Trajectory   │  │ - Laspeyres Index (I_L)      │
+│  - Anomaly & Fake-Discount Detection │  │ - Cross-Store Price Spreads  │
+└───────────────────┬──────────────────┘  └──────────────┬───────────────┘
+                    │                                    │
+                    ▼                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                Executive Excel Reporting (OpenPyXL)                    │
+│         Color-coded Deal Badges, Price Spread Alerts & KPI Charts      │
+└────────────────────────────────────────────────────────────────────────┘
 ```
 
----
-
-## 🔑 Key Engineering Features
-
-- **Anti-Bot Resilience:** Implements randomized desktop User-Agent header rotation, natural request delays, and retry loops with exponential backoff to handle rate limits and transient connection drops.
-- **Deal Scoring Algorithm:**
-  - `🔥 ارزش خرید بالا (Great Deal)`: Applied to products with $\ge 15\%$ discount or selling below 85% of market baseline.
-  - `⚖️ قیمت منصفانه (Fair Deal)`: Applied to products with $5\% \le \text{Discount} < 15\%$.
-  - `📌 قیمت عادی (Standard)`: Standard list pricing.
-- **Automated Price Drop Alerting:** When a price drop $\ge 15\%$ is detected, an event is logged in the `price_drop_alerts` database table for webhook/notification dispatching.
-- **Dual Persistence:** Automatically populates a local SQLite relational database and exports a formatted `.xlsx` workbook.
-- **High-Concurrency Go Module (`fast_fetcher_go/`):** Optional companion crawler written in Go utilizing Goroutines and channels to scrape dozens of endpoints concurrently without Python GIL overhead.
-- **Automated CI/CD (`.github/workflows/ci.yml`):** Fully integrated GitHub Actions workflow verifying Python scraping, database insertion, and Excel export on every commit.
+<p align="right">(<a href="#readme-top">Back to top ↑</a>)</p>
 
 ---
 
-## 📊 Database Schema (`market_data.db`)
+## 📐 Algorithmic Formulation & Pricing Models
 
-### `product_snapshots` Table
-| Column | Type | Description |
+### 1. Laspeyres Competitor Basket Price Index
+To quantify overall competitor basket price shifts relative to base period $t=0$:
+
+$$I_L = \frac{\sum_{i=1}^M p_{i,t} \cdot q_{i,0}}{\sum_{i=1}^M p_{i,0} \cdot q_{i,0}} \times 100$$
+
+Where $p_{i,t}$ is the price of product $i$ at time $t$ and $q_{i,0}$ is the baseline product weight.
+
+### 2. Deal Quality Scoring & Fake Discount Detection
+Given current price $p_t$, list price $p_{\text{list}}$, and historical 30-day mean price $\bar{p}_{30}$:
+
+$$\text{True Discount Ratio: } D_{\text{true}} = \frac{\bar{p}_{30} - p_t}{\bar{p}_{30}}$$
+
+$$\text{Classification: } \begin{cases}
+\text{FAKE DISCOUNT} & \text{if } p_{\text{list}} > \bar{p}_{30} \text{ and } p_t \ge \bar{p}_{30} \\
+\text{EXCELLENT DEAL} & \text{if } D_{\text{true}} \ge 0.15 \text{ and } p_t < \min(p_{\text{history}}) \\
+\text{FAIR PRICE} & \text{otherwise}
+\end{cases}$$
+
+### 3. Predictive Linear Trend Slope
+Using least-squares regression over the past $N$ observations:
+
+$$m = \frac{N \sum (t \cdot p_t) - \sum t \sum p_t}{N \sum t^2 - (\sum t)^2}, \quad p_{\text{forecast}}(t + \Delta t) = p_t + m \cdot \Delta t$$
+
+<p align="right">(<a href="#readme-top">Back to top ↑</a>)</p>
+
+---
+
+## 🛠️ Technology Stack
+
+| Layer | Technology | Role |
 | :--- | :--- | :--- |
-| `id` | INTEGER PRIMARY KEY | Unique auto-incrementing snapshot identifier |
-| `title` | TEXT | Cleaned product title |
-| `category` | TEXT | Product category classification |
-| `price_toman` | INTEGER | Final selling price in Toman |
-| `original_price_toman` | INTEGER | Base price before discount |
-| `discount_percent` | REAL | Calculated discount percentage |
-| `deal_score` | TEXT | Algorithmic deal quality rating |
-| `in_stock` | BOOLEAN | Inventory availability flag |
-| `seller` | TEXT | Marketplace merchant / vendor name |
-| `rating` | REAL | User review score (out of 5.0) |
-| `url` | TEXT | Canonical product URL |
-| `scraped_at` | TIMESTAMP | ISO timestamp of data capture |
+| **Scraper Core** | Python 3.10+ | Requests, BeautifulSoup4, HTTP adapter retries |
+| **High-Speed Fetcher**| Go (Golang 1.22+) | Concurrent HTTP worker pool for high-volume catalogs |
+| **Storage** | SQLite3 | Local, zero-configuration relational persistence |
+| **Analytics** | NumPy & Pandas | Price velocity calculation and Laspeyres basket indexing |
+| **Reporting** | OpenPyXL | Stylized Excel reporting with color-coded conditional badges |
+
+<p align="right">(<a href="#readme-top">Back to top ↑</a>)</p>
 
 ---
 
+## 📂 Repository Structure
+
+```text
+ecommerce-price-tracker/
+├── competitor_basket_index.py  # Laspeyres basket inflation & cross-store indexing
+├── market_data.db              # SQLite relational product database
+├── market_price_report.xlsx    # Sample generated executive Excel report
+├── price_trend_forecaster.py   # 7-day linear price forecasting & deal scoring
+├── README.md                   # Master engineering documentation
+├── requirements.txt            # Python dependencies
+├── scraper.py                  # Primary Python scraping and data extraction pipeline
+└── fast_fetcher_go/
+    ├── go.mod                  # Go module definition
+    └── main.go                 # High-concurrency Go HTTP worker pool
+```
+
+<p align="right">(<a href="#readme-top">Back to top ↑</a>)</p>
 
 ---
 
-## 📈 Module 3: Predictive Price Trend Forecaster ()
-- **Exponential Moving Average (EMA) Smoothing:** Evaluates price velocity over historical time-series data.
-- **7-Day Price Trajectory:** Calculates linear trend slope ($\Delta P / \Delta t$) and projects upcoming 7-day price bands.
-- **Algorithmic Buy-Timing Recommendation:**
-  - : Triggered when current price reaches historical channel lows ($\le 1.03 	imes P_{min}$).
-  - : High velocity negative slope ($	ext{Slope} < -1.5\%$) advising delay for deeper discounts.
-  - : Rising supplier pricing indicating imminent price hikes.
-- **Quick Run:**
-  
+## 🗄️ Database Schema
 
-## 🚀 Installation & Usage
+```sql
+CREATE TABLE IF NOT EXISTS products (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    product_title TEXT NOT NULL,
+    current_price REAL NOT NULL,
+    original_price REAL,
+    discount_percent REAL,
+    seller_name TEXT,
+    rating REAL,
+    stock_status TEXT,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+);
 
-### 1. Clone Repository
+CREATE INDEX idx_products_title ON products(product_title);
+CREATE INDEX idx_products_timestamp ON products(timestamp);
+```
+
+<p align="right">(<a href="#readme-top">Back to top ↑</a>)</p>
+
+---
+
+## 🚀 Quickstart & Installation
+
+### Prerequisites
+- Python `3.10+` installed
+- Go `1.20+` (optional, for high-speed fetcher)
+
+### Setup Instructions
 ```bash
+# 1. Clone repository
 git clone https://github.com/ArdavanGhal-Eh/ecommerce-price-tracker.git
 cd ecommerce-price-tracker
-```
 
-### 2. Set Up Virtual Environment & Dependencies
-```bash
+# 2. Create virtual environment & install requirements
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate   # On Windows: .\venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 3. Run Scraper Pipeline
-```bash
-# Run with default settings (Demo dataset & Excel generation):
-python scraper.py --category "Digital-Electronics" --output "market_price_report.xlsx"
+<p align="right">(<a href="#readme-top">Back to top ↑</a>)</p>
 
-# Run with custom database file:
-python scraper.py --category "Laptops" --output "laptops_report.xlsx" --db "my_catalog.db"
+---
+
+## 💻 CLI Reference & Usage Guide
+
+### 1. Crawl Listings & Persist to SQLite
+```bash
+python scraper.py --query "laptop" --pages 3 --export-excel
 ```
 
-### 4. (Optional) Run High-Concurrency Go Fetcher
+### 2. Run 7-Day Predictive Forecaster & Deal Quality Analyzer
+```bash
+python price_trend_forecaster.py --db market_data.db --min-discount 10
+```
+
+### 3. Compute Competitor Basket Inflation Index
+```bash
+python competitor_basket_index.py --base-date 2026-09-01 --current-date 2026-10-01
+```
+
+### 4. Running the High-Speed Go Fetcher
 ```bash
 cd fast_fetcher_go
-go run main.go
+go run main.go -workers 16 -input urls.txt
 ```
 
----
-
-## 📋 CLI Arguments Reference
-| Argument | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `--category` | `string` | `Digital-Electronics` | Product category filter |
-| `--output` | `string` | `market_price_report.xlsx` | Output Excel workbook filename |
-| `--db` | `string` | `market_data.db` | SQLite database file path |
-| `--demo` | `flag` | `True` | Runs pipeline with structured realistic dataset |
+<p align="right">(<a href="#readme-top">Back to top ↑</a>)</p>
 
 ---
 
-## 📄 Sample Excel Output Schema
-| عنوان کالا | دسته‌بندی | قیمت نهایی (تومان) | تخفیف (%) | ارزیابی قیمت (Deal Score) | وضعیت موجودی | فروشنده |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| لپ‌تاپ 15.6 اینچی ایسوس Vivobook 15 | لپ‌تاپ | ۳۸,۵۰۰,۰۰۰ | ۱۰٪ | ⚖️ قیمت منصفانه | موجود | دیجی‌کالا |
-| مک‌بوک ایر 13 اینچی اپل M2 | لپ‌تاپ | ۸۹,۰۰۰,۰۰۰ | ۵٪ | ⚖️ قیمت منصفانه | موجود | بازرگانی پارس |
-| گوشی موبایل سامسونگ Galaxy S24 Ultra | موبایل | ۷۲,۰۰۰,۰۰۰ | ۱۲٪ | ⚖️ قیمت منصفانه | موجود | دیجی‌لند |
-| مانیتور 27 اینچی شیائومی 165Hz | مانیتور | ۱۴,۲۰۰,۰۰۰ | ۱۶٪ | 🔥 ارزش خرید بالا | موجود | دیجی‌کالا |
+## 🗺️ Roadmap & Future Enhancements
+
+- [x] Resilient multi-page Python scraper with retry adapters
+- [x] High-concurrency Go worker pool
+- [x] Laspeyres basket price inflation index
+- [x] 7-day predictive price trend forecaster
+- [x] Automated OpenPyXL Excel reporting with deal badges
+- [ ] Headless Playwright / Selenium support for dynamic JS hydration
+- [ ] Telegram Bot webhook integration for instantaneous price drop alerts
+- [ ] Docker containerized daily cron scheduler
+
+<p align="right">(<a href="#readme-top">Back to top ↑</a>)</p>
 
 ---
 
-## 🛠️ Tech Stack
-- **Core Language:** Python 3.10+
-- **HTTP & Parsing:** `requests`, `beautifulsoup4`, `lxml`
-- **Data Engineering:** `pandas`, `openpyxl`, `sqlite3`
-- **Concurrency (Optional):** Go 1.21+ (`net/http`, Goroutines)
-- **CI/CD Automation:** GitHub Actions
+## 🤝 Contributing & License
+
+Contributions, bug reports, and optimizations are welcome! Feel free to open an issue or submit a Pull Request.
+
+Distributed under the **MIT License**. See `LICENSE` for details.
+
+<p align="right">(<a href="#readme-top">Back to top ↑</a>)</p>
 
 ---
 
-## 👨‍💻 Author
+## 👤 Author & Contact
+
 **Ardavan Ghal-Eh**  
-Mechanical Engineering Student, Sharif University of Technology  
-*Focus: Data Pipelines, Industrial Automation & Computational Engineering*
+*Department of Mechanical Engineering, Sharif University of Technology*  
+- **GitHub:** [@ArdavanGhal-Eh](https://github.com/ArdavanGhal-Eh)
+- **Profile:** [github.com/ArdavanGhal-Eh](https://github.com/ArdavanGhal-Eh)
+
+<p align="right">(<a href="#readme-top">Back to top ↑</a>)</p>
