@@ -47,13 +47,19 @@ class PriceScraper:
         }
 
     def _get_connection(self):
+        if self.db_path == ":memory:":
+            if not hasattr(self, "_mem_conn") or self._mem_conn is None:
+                self._mem_conn = sqlite3.connect(":memory:")
+            return self._mem_conn
         try:
             conn = sqlite3.connect(self.db_path)
-            conn.execute("CREATE TABLE IF NOT EXISTS _test_probe (id INT)")
+            conn.execute("PRAGMA journal_mode=WAL;")
             return conn
         except sqlite3.OperationalError:
             self.db_path = os.path.join("/tmp", os.path.basename(self.db_path))
-            return sqlite3.connect(self.db_path)
+            conn = sqlite3.connect(self.db_path)
+            conn.execute("PRAGMA journal_mode=WAL;")
+            return conn
 
     def _ensure_db_ready(self):
         with self._get_connection() as conn:
@@ -85,6 +91,8 @@ class PriceScraper:
                     triggered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             """)
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_snapshots_cat ON product_snapshots(category, price_toman)")
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_snapshots_scraped ON product_snapshots(scraped_at)")
             conn.commit()
 
     def calculate_deal_score(self, price: int, original_price: int, discount: float) -> str:
