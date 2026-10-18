@@ -284,8 +284,8 @@ Distributed under the **MIT License**. See `LICENSE` for details.
 
 ## 👤 Author & Contact
 
-**Ardavan Ghal-Eh**  
-*Department of Mechanical Engineering, Sharif University of Technology*  
+**Ardavan Ghal-Eh**
+*Department of Mechanical Engineering, Sharif University of Technology*
 - **GitHub:** [@ArdavanGhal-Eh](https://github.com/ArdavanGhal-Eh)
 - **Profile:** [github.com/ArdavanGhal-Eh](https://github.com/ArdavanGhal-Eh)
 
