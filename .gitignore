@@ -14,3 +14,6 @@ ENV/
 *.db-journal
 *.db-wal
 *.db-shm
+
+# Nightly Hardened Hygiene Rules
+*.key
