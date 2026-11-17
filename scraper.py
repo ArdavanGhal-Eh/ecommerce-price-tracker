@@ -154,7 +154,7 @@ class PriceScraper:
             cursor = conn.cursor()
             for r in records:
                 cursor.execute("""
-                    INSERT INTO product_snapshots 
+                    INSERT INTO product_snapshots
                     (title, category, price_toman, original_price_toman, discount_percent, deal_score, in_stock, seller, rating, url, scraped_at)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
@@ -185,7 +185,7 @@ class PriceScraper:
             "url": "لینک منبع",
             "scraped_at": "زمان استخراج"
         }, inplace=True)
-        
+
         with pd.ExcelWriter(output_file, engine="openpyxl") as writer:
             df.to_excel(writer, index=False, sheet_name="Market_Prices")
         logging.info(f"Successfully exported {len(records)} records with Deal Scores to {output_file}")
