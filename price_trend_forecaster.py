@@ -47,7 +47,7 @@ class PriceTrendForecaster:
 
         prices_arr = np.array(prices, dtype=float)
         ema_series = self.calculate_ema(prices)
-        
+
         # Calculate velocity (slope per interval)
         x = np.arange(len(prices_arr))
         slope, intercept = np.polyfit(x, prices_arr, 1)
@@ -91,14 +91,14 @@ class PriceTrendForecaster:
 def run_demo_forecast():
     """Demonstrates price forecast on realistic laptop pricing history."""
     forecaster = PriceTrendForecaster(alpha=0.35)
-    
+
     # 14-day price sample (in Toman) for ASUS Vivobook
     asus_prices = [
-        42500000, 42000000, 41800000, 41200000, 40900000, 
-        40500000, 40000000, 39800000, 39500000, 39200000, 
+        42500000, 42000000, 41800000, 41200000, 40900000,
+        40500000, 40000000, 39800000, 39500000, 39200000,
         38900000, 38700000, 38500000
     ]
-    
+
     forecast = forecaster.forecast_next_period(asus_prices, days_ahead=7)
     print("=" * 60)
     print("📈 نتیجه تحلیل سری زمانی و پیش‌بینی هوشمند قیمت:")
